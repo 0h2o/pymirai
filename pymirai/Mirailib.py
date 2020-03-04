@@ -6,7 +6,7 @@ from .Network import Network
 from .Message import *
 
 
-class ShutdownHandler(logging.Handler):
+class CriticalHandler(logging.Handler):
     def emit(self, record):
         print(record.msg)
         logging.shutdown()
@@ -14,7 +14,7 @@ class ShutdownHandler(logging.Handler):
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
 logger = logging.getLogger(__name__)
-logger.addHandler(ShutdownHandler(level=logging.CRITICAL))
+logger.addHandler(CriticalHandler(level=logging.CRITICAL))
 logging.getLogger("asyncio").setLevel(logging.INFO)
 
 class Bot(object):
