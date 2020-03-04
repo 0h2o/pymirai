@@ -20,7 +20,7 @@ class Network:
                     f"[data::{await response.text('utf-8')}]"
                 )
                 if response.status != 200:
-                    logger.critical('Post failed.')
+                    logger.info('Post failed.')
                     return False
                 data = await response.text(encoding="utf-8")
         return json.loads(data)
@@ -40,7 +40,7 @@ class Network:
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as response:
                 if response.status != 200:
-                    logger.critical('Get failed.')
+                    logger.info('Get failed.')
                     return False
                 data = await response.text(encoding="utf-8")
         return json.loads(data)

@@ -5,17 +5,21 @@ import aiohttp
 from .Network import Network
 from .Message import *
 
-
 class CriticalHandler(logging.Handler):
     def emit(self, record):
-        print(self.format(record))
+        msg = self.format(record)
+        print(msg)
         logging.shutdown()
         exit(1)
 
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+log_format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+logging.basicConfig(format=log_format, level=logging.INFO)
 logger = logging.getLogger(__name__)
-logger.addHandler(CriticalHandler(level=logging.CRITICAL))
+ch = CriticalHandler(level=logging.CRITICAL)
+ch.setFormatter(logging.Formatter(log_format))
+logger.addHandler(ch)
 logging.getLogger("asyncio").setLevel(logging.INFO)
+
 
 class Bot(object):
     def __init__(self, qq : int, auth_key : str, ip : str, port : int):
@@ -34,7 +38,7 @@ class Bot(object):
             logger.info("连接 core 正常")
             self.session = ret['session']
         else:
-            logger.critical("错误的 MIRAI API HTTP auth key", exc_info="Wrong HTTP auth key")
+            logger.critical("错误的 MIRAI API HTTP auth key")
        
         ret = await Network.post(f"http://{self.ip}:{self.port}/verify", {
             "sessionKey": self.session,
@@ -42,7 +46,7 @@ class Bot(object):
         })
 
         if self.retValue(ret) != 0:
-            logger.critical("Verify failed", exc_info="Verify failed")
+            logger.critical("Verify failed")
 
         return self
 
