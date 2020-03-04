@@ -8,11 +8,11 @@ from .Message import *
 
 class CriticalHandler(logging.Handler):
     def emit(self, record):
-        print(record.msg)
+        print(self.format(record))
         logging.shutdown()
         exit(1)
 
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
 logger.addHandler(CriticalHandler(level=logging.CRITICAL))
 logging.getLogger("asyncio").setLevel(logging.INFO)
