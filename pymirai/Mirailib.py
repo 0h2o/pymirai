@@ -5,8 +5,16 @@ import aiohttp
 from .Network import Network
 from .Message import *
 
+
+class ShutdownHandler(logging.Handler):
+    def emit(self, record):
+        print(record.msg)
+        logging.shutdown()
+        exit(1)
+
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+logger.addHandler(ShutdownHandler(level=logging.CRITICAL))
 logging.getLogger("asyncio").setLevel(logging.INFO)
 
 class Bot(object):
@@ -73,7 +81,7 @@ class Bot(object):
             ret = await Network.post(f"http://{self.ip}:{self.port}/sendGroupMessage", data)
 
         if self.retValue(ret) == 0: logger.info('Send message ok')
-        else: logger.critical('Sending message failed!')
+        else: logger.info('Sending message failed!')
         
         return self.retValue(ret) == 0
         
@@ -85,7 +93,7 @@ class Bot(object):
             logger.info('Upload image ok.')
             return ret
         else:
-            logger.critical('Upload image failed!')
+            logger.info('Upload image failed!')
     
     async def stupidUploadImage(self, image_path:str, friend_or_group:str):
         # upload both group and friend images and choose from the returned imageId
@@ -118,7 +126,7 @@ class Bot(object):
             ret = await Network.post(f"http://{self.ip}:{self.port}/sendFriendMessage", data)
 
         if self.retValue(ret) == 0: logger.info('Send friend message ok')
-        else: logger.critical('Sending friend message failed!')
+        else: logger.info('Sending friend message failed!')
 
         return self.retValue(ret) == 0
 
@@ -134,7 +142,7 @@ class Bot(object):
                 "qq": self.qq
             })
             if self.retValue(ret) == 0: logger.info('Session released.')
-            else: logger.critical(f'Session releasing failed, ret value: {self.retValue(ret)}.')
+            else: logger.info(f'Session releasing failed, ret value: {self.retValue(ret)}.')
 
 
     async def __aexit__(self, *excinfo):
