@@ -100,7 +100,7 @@ class Bot(object):
             logger.info('Upload image failed!')
     
     async def stupidUploadImage(self, image_path:str, friend_or_group:str):
-        # upload both group and friend images and choose from the returned imageId
+        # upload both group and friend images, choose from the returned imageIds
         # 因为我本地调的时候有时仅上传一者将会发送失败
         tbl = ['group', 'friend']
         assert(friend_or_group in tbl)
@@ -166,6 +166,15 @@ class FriendMessageEvent(object):
         await self.bot.sendFriendMessage(self.sender, message_chain, self.source if quote else None)
     async def reply_text(self, text, quote = False):
         await self.reply_message([miraiPlain(text)], quote)
+    async def reply_long_text(self, text, quote = False):
+        MAX_PER_BLOCK = 100
+        number_of_blocks = len(text) // MAX_PER_BLOCK
+        msgs = [text[i*MAX_PER_BLOCK:(i+1)*MAX_PER_BLOCK] for i in range(number_of_blocks)]
+        r = len(text) % MAX_PER_BLOCK
+        if r:
+            msgs.append(text[MAX_PER_BLOCK * number_of_blocks:])
+        for each in msgs:
+            await self.reply_text(each, quote=quote)
     async def reply_image(self, image_id, quote = False):
         await self.reply_message([miraiImage(image_id)], quote)
     
@@ -185,6 +194,15 @@ class GroupMessageEvent(object):
         await self.bot.sendGroupMessage(self.sender_group_id, message_chain, self.source if quote else None)
     async def reply_text(self, text, quote = False):
         await self.reply_message([miraiPlain(text)], quote)
+    async def reply_long_text(self, text, quote = False):
+        MAX_PER_BLOCK = 100
+        number_of_blocks = len(text) // MAX_PER_BLOCK
+        msgs = [text[i*MAX_PER_BLOCK:(i+1)*MAX_PER_BLOCK] for i in range(number_of_blocks)]
+        r = len(text) % MAX_PER_BLOCK
+        if r:
+            msgs.append(text[MAX_PER_BLOCK * number_of_blocks:])
+        for each in msgs:
+            await self.reply_text(each, quote=quote)
     async def reply_image(self, image_id, quote = False):
         await self.reply_message([miraiImage(image_id)], quote)
 

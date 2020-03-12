@@ -5,7 +5,7 @@ with open("README.md", "r", encoding='utf8') as fh:
 
 setuptools.setup(
     name="pymirai", 
-    version="0.0.4.3",
+    version="0.0.4.6",
     author="0h2o",
     author_email="yype@foxmail.com",
     description="A simple python binding for the great project Mirai",
